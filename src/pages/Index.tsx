@@ -53,6 +53,7 @@ const Index = () => {
     if (!selectedImage) return;
     
     setIsTransforming(true);
+    setActiveSection('transform');
     
     setTimeout(() => {
       const newTransform: Transform = {
@@ -65,11 +66,39 @@ const Index = () => {
       
       toast({
         title: '✨ Трансформация завершена',
-        description: 'Вы успешно переместились в новое тело!',
+        description: 'Вы переместились в данное тело!',
+        duration: 5000,
       });
       
       setSelectedImage(null);
     }, 3000);
+  };
+
+  const quickTransform = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+    setActiveSection('transform');
+    
+    setTimeout(() => {
+      setIsTransforming(true);
+      
+      setTimeout(() => {
+        const newTransform: Transform = {
+          id: Date.now().toString(),
+          image: imageUrl,
+          timestamp: new Date()
+        };
+        setTransforms(prev => [newTransform, ...prev]);
+        setIsTransforming(false);
+        
+        toast({
+          title: '✨ Трансформация завершена',
+          description: 'Вы переместились в данное тело!',
+          duration: 5000,
+        });
+        
+        setSelectedImage(null);
+      }, 3000);
+    }, 500);
   };
 
   return (
@@ -142,14 +171,37 @@ const Index = () => {
                 </Card>
               </div>
 
-              <Button
-                size="lg"
-                className="mt-12 text-xl px-12 py-6 magic-glow hover:scale-105 transition-transform"
-                onClick={() => setActiveSection('transform')}
-              >
-                <Icon name="Sparkles" className="mr-2" />
-                Начать трансформацию
-              </Button>
+              <div className="space-y-8">
+                <Button
+                  size="lg"
+                  className="text-xl px-12 py-6 magic-glow hover:scale-105 transition-transform"
+                  onClick={() => setActiveSection('transform')}
+                >
+                  <Icon name="Sparkles" className="mr-2" />
+                  Начать трансформацию
+                </Button>
+
+                <div className="max-w-2xl mx-auto">
+                  <p className="text-lg text-foreground/60 mb-4">Или попробуйте быструю трансформацию:</p>
+                  <Card 
+                    className="p-4 bg-card/50 backdrop-blur-sm border-primary/30 hover:border-primary transition-all hover:magic-glow cursor-pointer group"
+                    onClick={() => quickTransform('https://cdn.poehali.dev/files/Screenshot_20251226-225103_YouTube.jpg')}
+                  >
+                    <div className="flex items-center gap-4">
+                      <img 
+                        src="https://cdn.poehali.dev/files/Screenshot_20251226-225103_YouTube.jpg" 
+                        alt="Demo" 
+                        className="w-24 h-24 object-cover rounded-lg group-hover:scale-110 transition-transform"
+                      />
+                      <div className="text-left flex-1">
+                        <h4 className="text-lg font-semibold mb-1">Демо трансформация</h4>
+                        <p className="text-sm text-foreground/60">Нажмите чтобы переместиться в это тело</p>
+                      </div>
+                      <Icon name="ArrowRight" size={32} className="text-primary group-hover:translate-x-2 transition-transform" />
+                    </div>
+                  </Card>
+                </div>
+              </div>
             </div>
           </div>
         )}
